@@ -1,10 +1,16 @@
 # btc-dca-trading-system
 
+<!-- GitHub Buttons -->
+<p>
+  <a class="github-button" href="https://github.com/canstralian/dcalytics" data-icon="octicon-star" data-show-count="true" aria-label="Star canstralian/dcalytics on GitHub">Star</a>
+  <a class="github-button" href="https://github.com/canstralian/dcalytics/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork canstralian/dcalytics on GitHub">Fork</a>
+</p>
 
 <!-- Load GitHub Buttons script -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
 *Smart, hedged BTC investing made simple.*
+
 
 ## **Table of Contents**
 
