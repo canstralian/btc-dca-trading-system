@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCAlytics - Smart BTC DCA Trading System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-chart-line text-orange-500 text-2xl mr-3"></i>
+                    <h1 class="text-xl font-bold text-white">DCAlytics</h1>
+                </div>
+                <div class="text-sm text-gray-300">
+                    <span id="current-btc-price">Loading BTC price...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent">
+                Smart, Hedged BTC Investing Made Simple
+            </h2>
+            <p class="text-xl text-gray-300 mb-8">
+                Optimize your Bitcoin investments with dynamic dollar-cost averaging and risk-managed hedging strategies
+            </p>
+        </div>
+
+        <!-- Strategy Configuration -->
+        <div class="grid lg:grid-cols-2 gap-8 mb-8">
+            <!-- Configuration Panel -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                <h3 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i class="fas fa-cogs mr-3 text-orange-500"></i>
+                    Strategy Configuration
+                </h3>
+                
+                <form id="strategy-form">
+                    <div class="space-y-6">
+                        <!-- Investment Amount -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Investment Amount (USD)
+                            </label>
+                            <input type="number" id="investment-amount" value="100" min="1" step="1"
+                                   class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        </div>
+
+                        <!-- DCA Frequency -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                DCA Frequency (days)
+                            </label>
+                            <select id="frequency-days" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500">
+                                <option value="1">Daily</option>
+                                <option value="7" selected>Weekly</option>
+                                <option value="14">Bi-weekly</option>
+                                <option value="30">Monthly</option>
+                            </select>
+                        </div>
+
+                        <!-- Hedge Percentage -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Hedge Percentage: <span id="hedge-percentage-display">10%</span>
+                            </label>
+                            <input type="range" id="hedge-percentage" min="0" max="50" value="10" step="1"
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                        </div>
+
+                        <!-- Time Period -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
+                                <input type="date" id="start-date" 
+                                       class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">End Date</label>
+                                <input type="date" id="end-date"
+                                       class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500">
+                            </div>
+                        </div>
+
+                        <!-- Run Simulation Button -->
+                        <button type="submit" id="run-simulation" 
+                                class="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-yellow-600 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-play mr-2"></i>
+                            Run Simulation
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                <h3 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i class="fas fa-chart-bar mr-3 text-green-500"></i>
+                    Performance Metrics
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-green-400" id="total-return">-</div>
+                        <div class="text-sm text-gray-400">Total Return</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-400" id="annualized-return">-</div>
+                        <div class="text-sm text-gray-400">Annualized Return</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-red-400" id="max-drawdown">-</div>
+                        <div class="text-sm text-gray-400">Max Drawdown</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-400" id="sharpe-ratio">-</div>
+                        <div class="text-sm text-gray-400">Sharpe Ratio</div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-gray-700 rounded-lg p-4">
+                    <h4 class="font-semibold mb-2">Portfolio Summary</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Total Invested:</span>
+                            <span id="total-invested" class="text-gray-300">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>BTC Holdings:</span>
+                            <span id="btc-holdings" class="text-orange-400">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Portfolio Value:</span>
+                            <span id="portfolio-value" class="text-green-400">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="space-y-8">
+            <!-- Portfolio Value Chart -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-line-chart mr-3 text-blue-500"></i>
+                    Portfolio Value Over Time
+                </h3>
+                <div class="h-96">
+                    <canvas id="portfolio-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- BTC Price Chart -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-bitcoin mr-3 text-orange-500"></i>
+                    BTC Price Evolution
+                </h3>
+                <div class="h-96">
+                    <canvas id="btc-price-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-gray-800 rounded-lg p-8 text-center">
+                <i class="fas fa-spinner fa-spin text-4xl text-orange-500 mb-4"></i>
+                <div class="text-xl">Running Simulation...</div>
+                <div class="text-sm text-gray-400 mt-2">This may take a few moments</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="text-center text-gray-400">
+                <p>&copy; 2024 DCAlytics. Smart BTC investing made simple.</p>
+                <p class="mt-2 text-sm">
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    This is for educational purposes only. Not financial advice.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

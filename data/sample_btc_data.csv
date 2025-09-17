@@ -1,0 +1,17 @@
+# Sample BTC price data for demonstration
+# This file contains historical BTC price data for testing and development
+# In production, this would be replaced with real-time data from APIs
+
+Date,Price,Volume
+2020-01-01,7194.89,32890123456
+2020-01-02,7202.34,28756234567
+2020-01-03,7244.56,31234567890
+2020-01-04,7176.23,29876543210
+2020-01-05,7298.45,33456789012
+2020-01-06,7345.67,27890123456
+2020-01-07,7289.12,30123456789
+2020-01-08,7423.78,34567890123
+2020-01-09,7456.34,26789012345
+2020-01-10,7389.23,31890123456
+# ... (This would continue with daily data)
+# For the actual implementation, the TradingEngine generates this data programmatically
