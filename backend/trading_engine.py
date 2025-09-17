@@ -3,7 +3,7 @@ Trading Engine for DCAlytics - Core DCA and Hedging Logic
 """
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Tuple, Dict
 from .models import (
     DCAStrategy, TradeRecord, PortfolioSnapshot, 
@@ -39,6 +39,10 @@ class TradingEngine:
     
     def get_btc_price(self, timestamp: datetime) -> float:
         """Get BTC price at specific timestamp"""
+        # Convert to naive datetime for comparison
+        if timestamp.tzinfo is not None:
+            timestamp = timestamp.replace(tzinfo=None)
+        
         # Find closest date in historical data
         price_data = self.btc_price_history
         closest_idx = (price_data['timestamp'] - timestamp).abs().idxmin()
@@ -49,7 +53,14 @@ class TradingEngine:
         trades = []
         current_date = strategy.start_date
         
-        while current_date <= strategy.end_date:
+        # Convert to naive datetime if needed
+        if current_date.tzinfo is not None:
+            current_date = current_date.replace(tzinfo=None)
+        end_date = strategy.end_date
+        if end_date.tzinfo is not None:
+            end_date = end_date.replace(tzinfo=None)
+        
+        while current_date <= end_date:
             btc_price = self.get_btc_price(current_date)
             btc_quantity = strategy.investment_amount / btc_price
             
@@ -90,7 +101,16 @@ class TradingEngine:
         
         # Get all unique dates for portfolio snapshots
         trade_dates = [trade.timestamp for trade in trades]
-        all_dates = pd.date_range(strategy.start_date, strategy.end_date, freq='D')
+        
+        # Convert to naive datetimes for pandas
+        start_date = strategy.start_date
+        end_date = strategy.end_date
+        if start_date.tzinfo is not None:
+            start_date = start_date.replace(tzinfo=None)
+        if end_date.tzinfo is not None:
+            end_date = end_date.replace(tzinfo=None)
+            
+        all_dates = pd.date_range(start_date, end_date, freq='D')
         
         for date in all_dates:
             # Process trades for this date
