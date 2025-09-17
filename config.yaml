@@ -1,0 +1,57 @@
+# DCAlytics Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:8080"
+
+simulation:
+  max_days: 1095  # ~3 years
+  default_start_date: "2023-01-01"
+  default_end_date: "2024-01-01"
+  
+trading:
+  min_investment: 1
+  max_investment: 10000
+  max_hedge_percentage: 50
+  default_frequency: 7  # days
+  
+data_sources:
+  primary: "local"  # local, coinapi, cryptocompare
+  fallback: "local"
+  update_interval: 3600  # seconds
+  
+btc_price:
+  start_price: 7000  # Starting price for simulation
+  volatility: 0.04   # Daily volatility (4%)
+  trend: 0.001       # Daily trend (0.1%)
+  
+hedging:
+  strategies:
+    - "short_position"
+    - "options"
+    - "stablecoin"
+  default_strategy: "short_position"
+  hedge_cost: 0.02  # 2% cost for hedging
+  
+risk_management:
+  max_drawdown_alert: 20  # Alert if drawdown > 20%
+  stop_loss_enabled: false
+  stop_loss_percentage: 30
+  
+ui:
+  theme: "dark"
+  default_chart_period: "1y"
+  refresh_interval: 30  # seconds
+  
+cache:
+  enabled: true
+  duration: 86400  # 24 hours in seconds
+  
+logging:
+  level: "INFO"
+  file: "logs/dcalytics.log"
+  max_size: "10MB"
+  backup_count: 5
